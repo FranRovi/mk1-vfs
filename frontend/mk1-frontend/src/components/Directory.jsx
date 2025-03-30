@@ -3,6 +3,10 @@ import React from 'react';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 function Directory (props) {
+    const dataToSend = () => {
+        props.delDir(props.id);
+    }
+
     return (
         <div className='container'>
             <div className="row">
@@ -12,16 +16,11 @@ function Directory (props) {
                 </div>
                 <div className="col">
                     {/* <i class="bi bi-folder"></i> */}
-                    <h3>{props.name}</h3>
+                    <h3 className="">{props.name}</h3>
                 </div>
-                <div className="col-2">
-                    {/* <input /> */}
-                    <i class="bi bi-pencil-fill" onClick={() => console.log("pencil cliked")}> Update</i>
-                    {/* <button className='btn btn-info'>update</button> */}
-                </div>
-                <div className="col-2">
-                    <i class="bi bi-trash-fill" onClick={props.delDir}> Delete</i>
-                    {/* <button className='btn btn-danger'>delete</button> */}
+                <div className="col-1 d-flex">
+                    <i class="bi bi-pencil-fill pe-2" id={props.id} onClick={() => console.log("pencil cliked: " + props.id)}></i>
+                    <i class="bi bi-trash-fill ps-2" id={props.id} onClick={dataToSend}></i>
                 </div>
             </div>
         </div>

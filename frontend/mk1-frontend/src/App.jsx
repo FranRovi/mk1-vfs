@@ -35,11 +35,9 @@ function App() {
     setFilesResults(filesData)
   }
 
-  const deleteDirectoryClickHandler = async () => {
-    const deleteDir = await deleteDirectory("00d05b7c-486c-474e-b9bf-7f2f72ed3949");
-    console.log("Delete dir function called: " + deleteDirectory)
-    // setDirectory
-
+  const deleteDirectoryClickHandler = async (dir_id) => {
+    const deleteDir = await deleteDirectory(dir_id);
+    console.log("Directory Deleted: " + deleteDir);
   }
 
   return (
@@ -59,24 +57,27 @@ function App() {
             </tbody>
           </table>
         </div> */}
-        {Object.keys(directoriesResults).length === 1 ? <p>No Directories Available</p> : <p> Directories Updated </p>}
+        {/* {Object.keys(directoriesResults).length === 1 ? <p>No Directories Available</p> : <p> Directories Updated </p>} */}
         {/* {Object.keys(directoriesResults).length > 1 ? <p>{JSON.stringify(directoriesResults.directories[0].name)}</p> : <p></p>} */}
         {Object.keys(directoriesResults).length > 1 ? <Directory name={directoriesResults.directories[0].name} /> : <p></p>}
-        {Object.keys(childrenResults).length > 1 ? childrenResults.map(result => <Directory key= {result.id} name= {result.name} delDir= {deleteDirectoryClickHandler}/>) : <p>Nothing to show</p>}
+        {Object.keys(childrenResults).length > 1 ? childrenResults.map(result => <Directory key={result.id} id={result.id} name= {result.name} delDir= {deleteDirectoryClickHandler}/>) : <p>Nothing to show</p>}
         {/* // {JSON.stringify(directoriesResults.directories[0].name)} : <p></p> */}
         {/* <Directory name={directoriesResults.directories[0].name}/> */}
         {/* {JSON.stringify(directoriesResults.directories[0].name)} */}
         <br/>
+        <button onClick={directoriesClickHandler}>Fetch Directories</button>
+        <br/>
+        <hr/>
         <h1 className="text-danger">Files</h1>
         {Object.keys(filesResult).length === 1 ? <p>No Files Available</p> : <p> Files Updated </p>}
         {/* {Object.keys(filesResult).length > 1 ? <p>{JSON.stringify(filesResult.directories[0].name)}</p> : <p></p>} */}
         {JSON.stringify(filesResult.name)}
         <br/>
-        <br/>
-        <br/>
-        <button onClick={directoriesClickHandler}>Fetch Directories</button>
         <p></p>
         <button onClick={filesClickHandler}>Fetch Files</button>
+        <br/>
+        <hr/>
+        <h1 className="text-warning">Create Documents</h1>
       </div>
 
     </>
