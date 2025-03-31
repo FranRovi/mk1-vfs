@@ -13,6 +13,17 @@ export const getChildren = async (parent_id) => {
     return response.data
 }
 
+export const createDirectory = async (name, parent_id) => {
+    let name_body = name;
+    let parent_id_body = parent_id;
+    console.log("Create Directory Params: " + name_body, parent_id_body)
+    const response = await axios.post(`${baseURL}/directories`, {
+        name: name_body,
+        parent_id: parent_id_body,
+    });
+    console.log(response)
+}
+
 export const deleteDirectory = async (dir_id) => {
     const response = await axios.delete(`${baseURL}/directories/${dir_id}`,{
         data: {
@@ -21,7 +32,6 @@ export const deleteDirectory = async (dir_id) => {
     });
     console.log(response)
     return
-    // return response.data
 }
 
 export const getFiles = async () => {
