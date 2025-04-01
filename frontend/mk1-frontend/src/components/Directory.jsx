@@ -16,7 +16,7 @@ function Directory (props) {
                 </div>
                 <div className="col">
                     {/* <i class="bi bi-folder"></i> */}
-                    <h3 className="">{props.name}</h3>
+                    <h4 className="">{props.name}</h4>
                 </div>
                 <div className="col-1 d-flex">
                     <i class="bi bi-pencil-fill pe-2" id={props.id} onClick={() => console.log("pencil cliked: " + props.id)}></i>

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-// import File from '../components/File'
+import React, { useState, useEffect } from 'react';
+import File from './components/File'
 import Directory from './components/Directory';
-import { getDirectories, getFiles, getChildren, deleteDirectory, createDirectory } from "../src/services/frontend_services";
+import { deleteDirectory, createDocument, getDocuments } from "../src/services/frontend_services";
 
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './App.css'
@@ -9,7 +9,17 @@ import './App.css'
 function App() {
   const [type, setType] = useState("");
   const [name, setName] = useState("");
-  const [parent_id, setParent_id] = useState("bec46267-cc3c-45bf-9bd2-52928c6f44ef");
+  const [parent_id, setParent_id] = useState("bec46267-cc3c-45bf-9bd2-52928c6f44ef") // Desktop ID
+  // ("66102b24-60ef-4a7c-bce1-1b2e6d071811");
+  // 2165252f-7fbe-4299-afc3-d1dc35e5937a Work ID
+
+  const [documents, setDocuments] = useState({directories:[],files:[]});
+
+  // useEffect(() => {
+  //   setDocuments(getDirectories)
+  // }, [documents])
+
+  // console.log(documents)
 
   const updateName = (e) => {
     setName((prev) => e.target.value);
@@ -36,27 +46,11 @@ function App() {
   // }
 
 
-
-  const [directoriesResults, setDirectoriesResults] = useState({"directories":[{"name":"Unavailable"}]})
-    console.log("Directories when initializing the page: " + JSON.stringify(directoriesResults));
-
-  // const [directoryResults, setDirectoryResults] = useState({"directories":[{"name":"Unavailable"}]})
-  // console.log("Directories when initializing the page: " + JSON.stringify(directoriesResults));
-
-  const [filesResult, setFilesResults] = useState({"directories":                [{"name":"Unavailable"}]})
-    console.log("Files when initializing the page: " + JSON.stringify(filesResult));
-  
-  const [childrenResults, setChildrenResults] = useState({"directories":[]})
-  console.log("Children when initializing the page: " + JSON.stringify(childrenResults));
-
-  const directoriesClickHandler = async () => {
-    const directoriesData = await getDirectories();
-    console.log("Response from getDirectories function: " + JSON.stringify(directoriesData))
-    setDirectoriesResults(directoriesData)
-    const childrenData = await getChildren(parent_id);
-    console.log("Response from getChildren function: " + JSON.stringify(childrenData.directories))
-    setChildrenResults(childrenData.directories)
-
+  const documentsClickHandler = async () => {
+    const documentsData = await getDocuments();
+    console.log("Response from getDocuments function: " + JSON.stringify(documentsData));
+    setDocuments(documentsData);
+    console.log(documentsData);
   }
 
   const filesClickHandler = async () => {
@@ -70,18 +64,26 @@ function App() {
     console.log("Directory Deleted: " + deleteDir);
   }
 
+  // const formSubmitHandler = async (e) => {
+  //   e.preventDefault();
+  //   console.log("submitFormHandler: " + name, type, parent_id);
+  //   const createDir = await createDirectory(name, parent_id);
+  //   console.log(createDir);
+  // }
+
   const formSubmitHandler = async (e) => {
     e.preventDefault();
-    console.log("submitFormHandler: " + name, type, parent_id);
-    const createDir = await createDirectory(name, parent_id);
-    console.log(createDir);
+    console.log("submitFormHandler: " + type, name, parent_id);
+    const createDoc = await createDocument(type, name, parent_id);
+    console.log(createDoc);
   }
   return (
     <>
       <h1>MK1 Virtual File System</h1>
       <h2>*** Front End ***</h2>
       <div>
-        <h2 className="text-info">Directories</h2>
+        <div className='row'>
+          <div className='col-6'><h2 className="text-info">Directories</h2>
         {/* <div className="table-responsive"> 
           <table className="table">
             <tbody>
@@ -95,25 +97,28 @@ function App() {
           </table>
         </div> */}
  
-        {Object.keys(directoriesResults).length > 1 ? <Directory name={directoriesResults.directories[0].name} /> : <p></p>}
-        {Object.keys(childrenResults).length > 1 ? childrenResults.map(result => <Directory key={result.id} id={result.id} name= {result.name} delDir= {deleteDirectoryClickHandler}/>) : <p>Nothing to show</p>}
+        {Object.keys(documents.directories).length > 1 ? documents.directories.map(result => <Directory key={result.id} id={result.id} name= {result.name} delDir= {deleteDirectoryClickHandler}/>) : <p>Nothing to show</p>}
 
         <br/>
-        <button onClick={directoriesClickHandler}>Fetch Directories</button>
         <br/>
-        <hr/>
-        <h2 className="text-danger">Files</h2>
-        {Object.keys(filesResult).length === 1 ? <p>No Files Available</p> : <p> Files Updated </p>}
-        {JSON.stringify(filesResult.name)}
+        </div>
+          <div className='col 7-12'>
+            <h2 className="text-danger">Files</h2>
+            {Object.keys(documents.files).length > 1 ? documents.files.map(result => <File key={result.id} id={result.id} name= {result.name} delDir= {deleteDirectoryClickHandler}/>) : <p>Nothing to show</p>}
         <br/>
         <p></p>
-        <button onClick={filesClickHandler}>Fetch Files</button>
+      
         <br/>
+
+          </div> 
+        </div>
         <hr/>
+        <button className='btn btn-primary text-center' onClick={documentsClickHandler}>Fetch Documents</button>
+        
         <h2 className="text-warning">Create Documents</h2>
         <form onSubmit={formSubmitHandler} className="form-control">
           <div className="row">
-            <div className='col-4'>
+            <div className='col-4 mt-2'>
               <div className='form-check' onClick={updateType}>
                 <input type='radio' name='doc_type' value='directory' id='dir' /> <label htmlFor="dir" >Directory</label>
               </div>
@@ -122,20 +127,18 @@ function App() {
               </div>
             </div>
             <div className='col-4'>
-              <div class="input-group mb-3">
+              <div className="input-group mb-3">
                 {/* <span class="input-group-text" id="basic-addon1">@</span> */}
-                <input type="text" class="form-control" placeholder="Name of document" aria-label="Username" aria-describedby="basic-addon1" onChange={updateName} />
+                <input type="text" className="form-control mt-2" placeholder="Name of document" aria-label="Username" aria-describedby="basic-addon1" onChange={updateName} />
               </div>
             </div>
             <div className='col-4'>
-              <button type='submit' className='btn btn-primary'>Submit</button>
+              <button type='submit' className='btn btn-primary mt-2'>Submit</button>
             </div>
-            {<pre>{type}{name}</pre>}
+            {<pre>{type} <span>   </span> {name}</pre>}
           </div>
-        
         </form>
       </div>
-
     </>
   )
 }
