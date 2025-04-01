@@ -59,9 +59,16 @@ export const deleteDirectory = async (dir_id) => {
             recursive: true
         }
     });
+    console.log("Garbage Button Clicked")
     console.log(response)
     return
 }
+
+// export const deleteDirectory = async (dir_id) => {
+//     const response = await axios.delete(`${baseURL}/directories/${dir_id}`);
+//     console.log(response)
+//     return
+// }
 
 export const getFiles = async () => {
     // const response = await axios.get(`${baseURL}/files/bec46267-cc3c-45bf-9bd2-52928c6f44ef`)
@@ -71,6 +78,17 @@ export const getFiles = async () => {
     
     
     return response.data
+}
+
+export const deleteFile = async (dir_id) => {
+    const response = await axios.delete(`${baseURL}/files/${dir_id}`);
+    // const response = await axios.delete(`${baseURL}/files/${dir_id}`,{
+    //     data: {
+    //         recursive: true
+    //     }
+    // });
+    console.log(response)
+    return
 }
 
 // export const getDirectoriesWithParams = async () => {

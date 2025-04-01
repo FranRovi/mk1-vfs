@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import File from './components/File'
 import Directory from './components/Directory';
-import { deleteDirectory, createDocument, getDocuments } from "../src/services/frontend_services";
+import { deleteDirectory, createDocument, getDocuments, deleteFile } from "../src/services/frontend_services";
 
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './App.css'
@@ -12,6 +12,7 @@ function App() {
   const [parent_id, setParent_id] = useState("bec46267-cc3c-45bf-9bd2-52928c6f44ef") // Desktop ID
   // ("66102b24-60ef-4a7c-bce1-1b2e6d071811");
   // 2165252f-7fbe-4299-afc3-d1dc35e5937a Work ID
+  const [isEdit, setIsEdit] = useState(false)
 
   const [documents, setDocuments] = useState({directories:[],files:[]});
 
@@ -53,15 +54,25 @@ function App() {
     console.log(documentsData);
   }
 
-  const filesClickHandler = async () => {
-    const filesData = await getFiles();
-    console.log("Response from getFiles function: " + JSON.stringify(filesData))
-    setFilesResults(filesData)
-  }
+  // const filesClickHandler = async () => {
+  //   const filesData = await getFiles();
+  //   console.log("Response from getFiles function: " + JSON.stringify(filesData))
+  //   setFilesResults(filesData)
+  // }
 
   const deleteDirectoryClickHandler = async (dir_id) => {
+    console.log("Garbage Icon clicked: " + dir_id)
     const deleteDir = await deleteDirectory(dir_id);
     console.log("Directory Deleted: " + deleteDir);
+  }
+
+  const deleteFileClickHandler = async (dir_id) => {
+    const delFile = await deleteFile(dir_id);
+    console.log("File Deleted: " + delFile);
+  }
+
+  const updateDocumentClickHandler = async() => {
+
   }
 
   // const formSubmitHandler = async (e) => {
@@ -77,43 +88,50 @@ function App() {
     const createDoc = await createDocument(type, name, parent_id);
     console.log(createDoc);
   }
+
+  const directoryClickHandler = (id) => {
+    console.log("Directory onClick: " + id)
+    // console.log("Directory onClick: " + props.id)
+  }
   return (
     <>
       <h1>MK1 Virtual File System</h1>
       <h2>*** Front End ***</h2>
-      <div>
+      <div className='container m-0'>
         <div className='row'>
-          <div className='col-6'><h2 className="text-info">Directories</h2>
-        {/* <div className="table-responsive"> 
-          <table className="table">
-            <tbody>
-              <tr>
-                {directoriesResults && directoriesResults.map((directory)=> (<td>
-                  {/* <h2>{directory.name}</h2> 
-                  <File name={name} />
-                  </td>)) }
-              </tr>
-            </tbody>
-          </table>
-        </div> */}
+          <div className='col me-1'>
+            <h2 className="text-info">Directories</h2>
+                  {/* <div className="table-responsive"> 
+                    <table className="table">
+                      <tbody>
+                        <tr>
+                          {directoriesResults && directoriesResults.map((directory)=> (<td>
+                            {/* <h2>{directory.name}</h2> 
+                            <File name={name} />
+                            </td>)) }
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div> */}
  
-        {Object.keys(documents.directories).length > 1 ? documents.directories.map(result => <Directory key={result.id} id={result.id} name= {result.name} delDir= {deleteDirectoryClickHandler}/>) : <p>Nothing to show</p>}
+            {Object.keys(documents.directories).length > 1 ? documents.directories.map(result => <Directory key={result.id} id={result.id} name= {result.name} delDir={deleteDirectoryClickHandler} dirId={directoryClickHandler} />) : <p>Nothing to show</p>}
 
-        <br/>
-        <br/>
-        </div>
-          <div className='col 7-12'>
+          </div>
+          {/* <div className='col'>
+            <h3>space in between</h3>
+          <div/> */}
+          <div className='col ms-1'>
             <h2 className="text-danger">Files</h2>
-            {Object.keys(documents.files).length > 1 ? documents.files.map(result => <File key={result.id} id={result.id} name= {result.name} delDir= {deleteDirectoryClickHandler}/>) : <p>Nothing to show</p>}
-        <br/>
-        <p></p>
-      
-        <br/>
+            {Object.keys(documents.files).length > 1 ? documents.files.map(result => <File className='ms-0 ps-0' key={result.id} id={result.id} name= {result.name} delFile={deleteFileClickHandler}/>) : <p>Nothing to show</p>}
 
           </div> 
-        </div>
+        </div>       
+        {/* <hr/> */}
+        <button className='btn btn-primary text-center mt-5' onClick={documentsClickHandler}>Fetch Documents</button>
+
+        {/* <br/> */}
         <hr/>
-        <button className='btn btn-primary text-center' onClick={documentsClickHandler}>Fetch Documents</button>
+        {/* <br/> */}
         
         <h2 className="text-warning">Create Documents</h2>
         <form onSubmit={formSubmitHandler} className="form-control">
@@ -139,6 +157,7 @@ function App() {
           </div>
         </form>
       </div>
+    {/* </div> */}
     </>
   )
 }

@@ -4,7 +4,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const File = (props) => {
     const dataToSend = () => {
-        props.delDir(props.id);
+        props.delFile(props.id);
     }
     
     return(

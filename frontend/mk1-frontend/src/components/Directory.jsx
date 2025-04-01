@@ -4,7 +4,12 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 
 function Directory (props) {
     const dataToSend = () => {
+        console.log("Garbage Icon cliked");
         props.delDir(props.id);
+    }
+
+    const idToSend = () => {
+        props.dirId(props.id);
     }
 
     return (
@@ -16,7 +21,7 @@ function Directory (props) {
                 </div>
                 <div className="col">
                     {/* <i class="bi bi-folder"></i> */}
-                    <h4 className="">{props.name}</h4>
+                    <h5 className="" onClick={idToSend}>{props.name}</h5>
                 </div>
                 <div className="col-1 d-flex">
                     <i class="bi bi-pencil-fill pe-2" id={props.id} onClick={() => console.log("pencil cliked: " + props.id)}></i>
