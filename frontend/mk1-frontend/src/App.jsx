@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import File from './components/File'
 import Directory from './components/Directory';
-import { deleteDirectory, createDocument, getDocuments, deleteFile } from "../src/services/frontend_services";
+import { deleteDirectory, createDocument, getDocuments, deleteFile, updateDocument } from "../src/services/frontend_services";
 
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './App.css'
@@ -12,7 +12,8 @@ function App() {
   const [parent_id, setParent_id] = useState("bec46267-cc3c-45bf-9bd2-52928c6f44ef") // Desktop ID
   // ("66102b24-60ef-4a7c-bce1-1b2e6d071811");
   // 2165252f-7fbe-4299-afc3-d1dc35e5937a Work ID
-  const [isEdit, setIsEdit] = useState(false)
+  // const [isEdit, setIsEdit] = useState(true)
+  const [updatedName, setUpdatedName] = useState();
 
   const [documents, setDocuments] = useState({directories:[],files:[]});
 
@@ -33,6 +34,10 @@ function App() {
     
     // setType();
   }
+
+  // const updateDocument = () => {
+
+  // }
   // const formChangeHandler = (e) => {
   //   setFormData({
   //     ...formData,
@@ -71,7 +76,11 @@ function App() {
     console.log("File Deleted: " + delFile);
   }
 
-  const updateDocumentClickHandler = async() => {
+  const updateDocumentClickHandler = async(type, newName, dir_id, parent_id) => {
+    // const newNameFromChildren = {}
+    console.log(newName, dir_id, parent_id)
+    const updateFile = await updateDocument(type, newName, dir_id, parent_id);
+    console.log("Document Updated: " + updateFile);
 
   }
 
@@ -93,6 +102,7 @@ function App() {
     console.log("Directory onClick: " + id)
     // console.log("Directory onClick: " + props.id)
   }
+
   return (
     <>
       <h1>MK1 Virtual File System</h1>
@@ -114,7 +124,7 @@ function App() {
                     </table>
                   </div> */}
  
-            {Object.keys(documents.directories).length > 1 ? documents.directories.map(result => <Directory key={result.id} id={result.id} name= {result.name} delDir={deleteDirectoryClickHandler} dirId={directoryClickHandler} />) : <p>Nothing to show</p>}
+            {Object.keys(documents.directories).length > 1 ? documents.directories.map(result => <Directory key={result.id} id={result.id} name= {result.name} parent_id={parent_id} type="directory" delDir={deleteDirectoryClickHandler} dirId={directoryClickHandler} updateDir={updateDocumentClickHandler} />) : <p>Nothing to show</p>}
 
           </div>
           {/* <div className='col'>
@@ -122,7 +132,9 @@ function App() {
           <div/> */}
           <div className='col ms-1'>
             <h2 className="text-danger">Files</h2>
-            {Object.keys(documents.files).length > 1 ? documents.files.map(result => <File className='ms-0 ps-0' key={result.id} id={result.id} name= {result.name} delFile={deleteFileClickHandler}/>) : <p>Nothing to show</p>}
+            {Object.keys(documents.files).length > 1 ? documents.files.map(result => <File className='ms-0 ps-0' key={result.id} id={result.id} name= {result.name} type="file" delFile={deleteFileClickHandler}/> ) : <p>Nothing to show</p>}
+            {/* { isEdit && <input type="text" className="form-control mt-2" placeholder="Updated Name" />} */}
+            {/* { isEdit && <input type="text" className="form-control mt-2" placeholder="Updated Name" />} */}
 
           </div> 
         </div>       
@@ -147,7 +159,7 @@ function App() {
             <div className='col-4'>
               <div className="input-group mb-3">
                 {/* <span class="input-group-text" id="basic-addon1">@</span> */}
-                <input type="text" className="form-control mt-2" placeholder="Name of document" aria-label="Username" aria-describedby="basic-addon1" onChange={updateName} />
+                <input type="text" className="form-control mt-2" placeholder="Name of document" onChange={updateName} />
               </div>
             </div>
             <div className='col-4'>

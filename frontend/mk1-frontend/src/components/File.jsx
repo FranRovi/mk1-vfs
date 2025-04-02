@@ -1,5 +1,4 @@
-import React from 'react';
-import Buttons from './Buttons'
+import React, { useState } from 'react';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const File = (props) => {

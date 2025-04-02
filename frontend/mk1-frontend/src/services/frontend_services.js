@@ -26,7 +26,7 @@ export const getDocuments = async () => {
 export const createDocument = async (type, name, parent_id) => {
     let name_body = name;
     let parent_id_body = parent_id;
-    console.log("Create Directory Params: " + name_body, parent_id_body)
+    console.log("Create Document Params: " + name_body, parent_id_body)
     if (type === 'directory') {
         const response = await axios.post(`${baseURL}/directories`, {
             name: name_body,
@@ -37,6 +37,29 @@ export const createDocument = async (type, name, parent_id) => {
         const response = await axios.post(`${baseURL}/files`, {
             filename: name_body,
             parent_id: parent_id_body,
+        });
+        console.log(response)
+    }
+}
+
+export const updateDocument = async (type, name, id, parent_id) => {
+    let name_body = name;
+    let parent_id_body = parent_id;
+    console.log("Update Documents Params: " + name_body, parent_id_body)
+    if (type === 'directory') {
+        const response = await axios.patch(`${baseURL}/directories/${id}`, {
+            updates: {
+                name: name_body,
+                parent_id: parent_id_body,
+            }
+        });
+        console.log(response)
+    } else {
+        const response = await axios.patch(`${baseURL}/files/${id}`, {
+            updates: {
+                filename: name_body,
+                parent_id: parent_id_body,
+            }
         });
         console.log(response)
     }
