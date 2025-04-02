@@ -55,9 +55,10 @@ export const updateDocument = async (type, name, id, parent_id) => {
         });
         console.log(response)
     } else {
+        console.log(name_body, parent_id_body)
         const response = await axios.patch(`${baseURL}/files/${id}`, {
             updates: {
-                filename: name_body,
+                name: name_body,
                 parent_id: parent_id_body,
             }
         });
