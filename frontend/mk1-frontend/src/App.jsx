@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import File from './components/File'
 import Directory from './components/Directory';
+import CreateDoc from './components/CreateDoc'
 import { deleteDirectory, createDocument, getDocuments, deleteFile, updateDocument } from "../src/services/frontend_services";
 
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -109,10 +110,16 @@ function App() {
       <Header />
       {/* <h1>MK1 Virtual File System</h1>
       <h2>*** Front End ***</h2> */}
-      <div className='container m-0'>
+      <div>
+        <div className="row">
+          <div className="col">
+          <h3 className="text-start text-decoration-underline bebas-neue-regular mb-5">Current Directory</h3>
+          </div>
+        </div>
+        <hr/>
         <div className='row'>
           <div className='col me-1'>
-            <h2 className="text-info">Directories</h2>
+            <h3 className="text-start text-decoration-underline bebas-neue-regular">Directories</h3>
                   {/* <div className="table-responsive"> 
                     <table className="table">
                       <tbody>
@@ -133,7 +140,7 @@ function App() {
             <h3>space in between</h3>
           <div/> */}
           <div className='col ms-1'>
-            <h2 className="text-danger">Files</h2>
+            <h3 className="text-end text-decoration-underline bebas-neue-regular">Files</h3>
             {Object.keys(documents.files).length > 1 ? documents.files.map(result => <File className='ms-0 ps-0' key={result.id} id={result.id} name= {result.name} parent_id={parent_id} type="file" delFile={deleteFileClickHandler} dirId={directoryClickHandler} updateDir={updateDocumentClickHandler} />) : <p>Nothing to show</p>}
             {/* { isEdit && <input type="text" className="form-control mt-2" placeholder="Updated Name" />} */}
             {/* { isEdit && <input type="text" className="form-control mt-2" placeholder="Updated Name" />} */}
@@ -141,36 +148,37 @@ function App() {
           </div> 
         </div>       
         {/* <hr/> */}
-        <button className='btn btn-primary text-center mt-5' onClick={documentsClickHandler}>Fetch Documents</button>
+        <button className='btn btn-secondary text-center mt-5' onClick={documentsClickHandler}>Fetch Documents</button>
 
         {/* <br/> */}
         <hr/>
         {/* <br/> */}
         
-        <h2 className="text-warning">Create Documents</h2>
-        <form onSubmit={formSubmitHandler} className="form-control">
+        <h3 className="text-start text-decoration-underline bebas-neue-regular">Create Documents</h3>
+        <form onSubmit={formSubmitHandler} className="form-control no-border">
           <div className="row">
             <div className='col-4 mt-2'>
-              <div className='form-check' onClick={updateType}>
-                <input type='radio' name='doc_type' value='directory' id='dir' /> <label htmlFor="dir" >Directory</label>
+              <div className='form-check text-start' onClick={updateType}>
+                <input type='radio' name='doc_type' value='directory' id='dir' /> <label htmlFor="dir"><i className="bi bi-folder-fill pe-1"></i>Directory</label>
               </div>
-              <div className='form-check' onClick={updateType}>
-                <input type='radio' name='doc_type' value='file' id='file' /> <label htmlFor="file">File</label>
+              <div className='form-check text-start' onClick={updateType}>
+                <input type='radio' name='doc_type' value='file' id='file' /> <label htmlFor="file"><i class="bi bi-file-earmark-text pe-1"></i>File</label>
               </div>
             </div>
-            <div className='col-4'>
-              <div className="input-group mb-3">
+            <div className='col'>
+              <div className="input-group">
                 {/* <span class="input-group-text" id="basic-addon1">@</span> */}
-                <input type="text" className="form-control mt-2" placeholder="Name of document" onChange={updateName} />
+                <input type="text" className="form-control mt-2 w-25" placeholder="Name of document" onChange={updateName} />
               </div>
             </div>
-            <div className='col-4'>
-              <button type='submit' className='btn btn-primary mt-2'>Submit</button>
+            <div className='col-3'>
+              <button type='submit' className='btn btn-secondary mt-2'>Submit</button>
             </div>
-            {<pre>{type} <span>   </span> {name}</pre>}
+            {/* {<pre>{type} <span>   </span> {name}</pre>} */}
           </div>
         </form>
       </div>
+      {/* <CreateDoc submit={formSubmitHandler}/> */}
     {/* </div> */}
     </>
   )
