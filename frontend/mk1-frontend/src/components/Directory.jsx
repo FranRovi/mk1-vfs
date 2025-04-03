@@ -18,9 +18,9 @@ function Directory (props) {
     }
 
     const idToSend = () => {
-        props.dirId(props.id);
+        props.dirId(props.id, props.name);
         console.log("Name cliked")
-        setIsEdit((prev) => !prev); 
+        // setIsEdit((prev) => !prev); 
     }
 
     const updateName = (e) => {
@@ -45,17 +45,17 @@ function Directory (props) {
         <div className='container'>
             <div className="row">
                 <div className="col-1">
-                    <i class="bi bi-folder-fill"></i>
+                    <i className="bi bi-folder-fill"></i>
                     {/* <img height={30} width={30} alt="folder image" src="https://cdn.pixabay.com/photo/2013/07/12/19/27/folder-154803_960_720.png" /> */}
                 </div>
                 <div className="col">
                     {/* <i class="bi bi-folder"></i> */}
                     <h5 className="" onClick={idToSend}>{props.name}</h5>
-                    { isEdit && <div><input type="text" className="form-control mt-2 ms-2 ps-3" placeholder={newName} onChange={updateName} /><button className="btn btn-secondary mt-1 mb-3 p-2 btn-sm" onClick={nameToBeUpdated}>Confirm Change</button></div>}
+                    { isEdit && <div><input type="text" className="form-control mt-2 ms-2 ps-3" placeholder={newName} onChange={updateName} /><button className="btn btn-secondary mt-1 mb-3 p-2 btn-sm rounded-pill" onClick={nameToBeUpdated}>Confirm Change</button></div>}
                 </div>
                 <div className="col-1 d-flex">
-                    <i class="bi bi-pencil-fill pe-2" id={props.id} onClick={dataToUpdate}></i>
-                    <i class="bi bi-trash-fill ps-2" id={props.id} onClick={dataToSend}></i>
+                    <i className="bi bi-pencil-fill pe-2" id={props.id} onClick={dataToUpdate}></i>
+                    <i className="bi bi-trash-fill ps-2" id={props.id} onClick={dataToSend}></i>
                 </div>
             </div>
         </div>

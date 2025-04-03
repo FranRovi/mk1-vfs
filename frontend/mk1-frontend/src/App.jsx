@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import File from './components/File'
 import Directory from './components/Directory';
-import CreateDoc from './components/CreateDoc'
-import { deleteDirectory, createDocument, getDocuments, deleteFile, updateDocument } from "../src/services/frontend_services";
+import { deleteDirectory, createDocument, getDocuments, deleteFile, updateDocument, getRoot } from "../src/services/frontend_services";
 
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './App.css'
@@ -18,10 +17,27 @@ function App() {
   // const [updatedName, setUpdatedName] = useState();
 
   const [documents, setDocuments] = useState({directories:[],files:[]});
+  const [currentDirId, setCurrentDirId] = useState([])
+  const [path, setPath] = useState([])
 
-  // useEffect(() => {
-  //   setDocuments(getDirectories)
-  // }, [documents])
+  // const [testDirFetch, setTestDirFetch] = useState("")
+
+  const findRoot = async () => {
+    const response = await getRoot()
+    // console.log(JSON.stringify(response))
+    setDocuments(response)
+    // console.log(documents)
+  }
+  
+  useEffect(() => {
+    findRoot()
+    // path.push("Root")
+    // const response = getRoot()
+    // console.log(JSON.stringify(response))
+    // setTestDirFetch(response)
+    // setDocuments(getDirectories)
+  }, [])
+  // console.log(JSON.stringify(testDirFetch))
 
   // console.log(documents)
 
@@ -31,10 +47,53 @@ function App() {
   }
 
   const updateType = (e) => {
-    setType((prev) => e.target.value);
-    console.log("Updated radio button: " + type);
+    // setType(() => e.target.value);
+    // console.log("Updated radio button: " + type);
+
+    console.log("Prev radio Button Value: " + type)
+    if (e.target.value === 'directory' && type !== 'directory'
+    ) {
+      setType(() => 'directory')
+    }
+
+    if (e.target.value === 'file' && type !== 'file'
+    ) {
+      setType(() => 'file')
+    }
+    console.log("Updated radio button: " + type)
+
     
     // setType();
+  }
+  const goBackDir = async () => {
+    console.log("current path: " + path)
+    path.pop()
+    console.log("current path: " + path)
+    setPath(path);
+    console.log("current dir ids: " + currentDirId)
+    currentDirId.pop();
+    setCurrentDirId(currentDirId);
+    console.log("current dir ids: " + currentDirId)
+    if (currentDirId.length === 0) {
+      const response = await getRoot()
+      setDocuments(response)
+    } else {
+      let dir_id = currentDirId[currentDirId.length - 1];
+      console.log("dir_id: " + dir_id)
+      const documentsData = await getDocuments(dir_id);
+      setDocuments(documentsData);  
+    }
+
+
+    // console.log("Current Path: " + path);
+    // const newPath = path.pop()
+    // console.log("New Path: " + newPath) 
+    
+    // path.pop()
+    // console.log(path)
+    // setPath(prev => prev.pop())
+    // console.log(path)
+    // setPath(newPath)
   }
 
   // const updateDocument = () => {
@@ -54,10 +113,16 @@ function App() {
   // }
 
 
-  const documentsClickHandler = async () => {
-    const documentsData = await getDocuments();
+  const documentsClickHandler = async (dir_id, dir_name) => {
+    const documentsData = await getDocuments(dir_id);
     console.log("Response from getDocuments function: " + JSON.stringify(documentsData));
     setDocuments(documentsData);
+    path.push(dir_name);
+    setPath(path);
+    console.log("current path: " + path)
+    currentDirId.push(dir_id);
+    setCurrentDirId(currentDirId);
+    console.log("current dir ids: " + currentDirId)
     console.log(documentsData);
   }
 
@@ -114,55 +179,49 @@ function App() {
         <div className="row">
           <div className="col">
           <h3 className="text-start text-decoration-underline bebas-neue-regular mb-5">Current Directory</h3>
-          </div>
+            {/* <div className="row"> */}
+              {/* <div className="d-flex"> */}
+                {/* {<h4>{ path.length >= 1 ? path.join(" / ") : path[0] }</h4>} */}
+                {/* {path} */}
+                {<h4>{"/ " + path.join(" / ")}</h4>}
+
+                {path.length === 0 ? <></> : <button className='btn btn-secondary mt-2 rounded-pill float-none' onClick={goBackDir}>Go Back</button>}
+              </div>
+            {/* </div> */}
+            
+          {/* </div> */}
         </div>
         <hr/>
         <div className='row'>
           <div className='col me-1'>
             <h3 className="text-start text-decoration-underline bebas-neue-regular">Directories</h3>
-                  {/* <div className="table-responsive"> 
-                    <table className="table">
-                      <tbody>
-                        <tr>
-                          {directoriesResults && directoriesResults.map((directory)=> (<td>
-                            {/* <h2>{directory.name}</h2> 
-                            <File name={name} />
-                            </td>)) }
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div> */}
+
  
-            {Object.keys(documents.directories).length > 1 ? documents.directories.map(result => <Directory key={result.id} id={result.id} name= {result.name} parent_id={parent_id} type="directory" delDir={deleteDirectoryClickHandler} dirId={directoryClickHandler} updateDir={updateDocumentClickHandler} />) : <p>Nothing to show</p>}
+            {Object.keys(documents.directories).length > 1 ? documents.directories.map(result => <Directory key={result.id} id={result.id} name= {result.name} parent_id={parent_id} type="directory" delDir={deleteDirectoryClickHandler} dirId={documentsClickHandler} updateDir={updateDocumentClickHandler} />) : <p>Nothing to show</p>}
 
           </div>
-          {/* <div className='col'>
-            <h3>space in between</h3>
-          <div/> */}
+
           <div className='col ms-1'>
             <h3 className="text-end text-decoration-underline bebas-neue-regular">Files</h3>
             {Object.keys(documents.files).length > 1 ? documents.files.map(result => <File className='ms-0 ps-0' key={result.id} id={result.id} name= {result.name} parent_id={parent_id} type="file" delFile={deleteFileClickHandler} dirId={directoryClickHandler} updateDir={updateDocumentClickHandler} />) : <p>Nothing to show</p>}
-            {/* { isEdit && <input type="text" className="form-control mt-2" placeholder="Updated Name" />} */}
-            {/* { isEdit && <input type="text" className="form-control mt-2" placeholder="Updated Name" />} */}
 
           </div> 
         </div>       
         {/* <hr/> */}
         <button className='btn btn-secondary text-center mt-5' onClick={documentsClickHandler}>Fetch Documents</button>
 
-        {/* <br/> */}
         <hr/>
-        {/* <br/> */}
+
         
         <h3 className="text-start text-decoration-underline bebas-neue-regular">Create Documents</h3>
         <form onSubmit={formSubmitHandler} className="form-control no-border">
           <div className="row">
             <div className='col-4 mt-2'>
               <div className='form-check text-start' onClick={updateType}>
-                <input type='radio' name='doc_type' value='directory' id='dir' /> <label htmlFor="dir"><i className="bi bi-folder-fill pe-1"></i>Directory</label>
+                <input type='radio' name='doc_type' value='directory' id='dir' onClick={updateType}/> <label htmlFor="dir" onClick={updateType}><i className="bi bi-folder-fill pe-1" onClick={updateType}></i>Directory</label>
               </div>
               <div className='form-check text-start' onClick={updateType}>
-                <input type='radio' name='doc_type' value='file' id='file' /> <label htmlFor="file"><i class="bi bi-file-earmark-text pe-1"></i>File</label>
+                <input type='radio' name='doc_type' value='file' id='file' onClick={updateType} /> <label htmlFor="file" onClick={updateType}><i className="bi bi-file-earmark-text pe-1" onClick={updateType}></i>File</label>
               </div>
             </div>
             <div className='col'>
@@ -172,13 +231,12 @@ function App() {
               </div>
             </div>
             <div className='col-3'>
-              <button type='submit' className='btn btn-secondary mt-2'>Submit</button>
+              <button type='submit' className='btn btn-secondary mt-2 rounded-pill'>Create</button>
             </div>
             {/* {<pre>{type} <span>   </span> {name}</pre>} */}
           </div>
         </form>
       </div>
-      {/* <CreateDoc submit={formSubmitHandler}/> */}
     {/* </div> */}
     </>
   )
