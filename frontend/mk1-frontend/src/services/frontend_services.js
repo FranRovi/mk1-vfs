@@ -14,6 +14,11 @@ export const getRoot = async () => {
 }
 
 export const getDocuments = async (dir_id) => {
+    console.log(dir_id)
+    // 
+    if (dir_id === null){
+        getRoot();
+    }
     const response = await axios.get(`${baseURL}/directories?parent_id=${dir_id}`)
     return response.data
     // bec46267-cc3c-45bf-9bd2-52928c6f44ef DESKTOP ID
