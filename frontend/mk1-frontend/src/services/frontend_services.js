@@ -3,130 +3,71 @@ import axios from "axios";
 
 const baseURL = "http://localhost:8000";
 
-// export const getDocuments = async ("parent_id") => {
-//     const response = await axios.get(`${baseURL}/directories?parent_id=${parent_id}`)
-//     return response.data
-// }
-
 export const getRoot = async () => {
     const response = await axios.get(`${baseURL}/directories`)
     return response.data
 }
 
 export const getDocuments = async (dir_id) => {
-    console.log(dir_id)
-    // 
+    let response;
     if (dir_id === null){
-        getRoot();
+        response = await axios.get(`${baseURL}/directories`)
+    } else {
+        response = await axios.get(`${baseURL}/directories?parent_id=${dir_id}`)
     }
-    const response = await axios.get(`${baseURL}/directories?parent_id=${dir_id}`)
     return response.data
-    // bec46267-cc3c-45bf-9bd2-52928c6f44ef DESKTOP ID
 }
 
-// export const getDirectories = async () => {
-//     const response = await axios.get(`${baseURL}/directories`)
-//     return response.data
-// }
-
-// export const getChildren = async (parent_id) => {
-//     const response = await axios.get(`${baseURL}/directories?parent_id=${parent_id}`)
-//     return response.data
-// }
 
 export const createDocument = async (type, name, parent_id) => {
     let name_body = name;
     let parent_id_body = parent_id;
-    console.log("Create Document Params: " + name_body, parent_id_body)
     if (type === 'directory') {
-        const response = await axios.post(`${baseURL}/directories`, {
+        await axios.post(`${baseURL}/directories`, {
             name: name_body,
             parent_id: parent_id_body,
         });
-        console.log(response)
     } else {
-        const response = await axios.post(`${baseURL}/files`, {
+        await axios.post(`${baseURL}/files`, {
             filename: name_body,
             parent_id: parent_id_body,
         });
-        console.log(response)
     }
 }
+
 
 export const updateDocument = async (type, name, id, parent_id) => {
     let name_body = name;
     let parent_id_body = parent_id;
-    console.log("Update Documents Params: " + name_body, parent_id_body)
     if (type === 'directory') {
-        const response = await axios.patch(`${baseURL}/directories/${id}`, {
+        await axios.patch(`${baseURL}/directories/${id}`, {
             updates: {
                 name: name_body,
                 parent_id: parent_id_body,
             }
         });
-        console.log(response)
     } else {
-        console.log(name_body, parent_id_body)
-        const response = await axios.patch(`${baseURL}/files/${id}`, {
+        await axios.patch(`${baseURL}/files/${id}`, {
             updates: {
                 name: name_body,
                 parent_id: parent_id_body,
             }
         });
-        console.log(response)
     }
 }
 
-// export const createDirectory = async (name, parent_id) => {
-//     let name_body = name;
-//     let parent_id_body = parent_id;
-//     console.log("Create Directory Params: " + name_body, parent_id_body)
-//     const response = await axios.post(`${baseURL}/directories`, {
-//         name: name_body,
-//         parent_id: parent_id_body,
-//     });
-//     console.log(response)
-// }
 
 export const deleteDirectory = async (dir_id) => {
-    const response = await axios.delete(`${baseURL}/directories/${dir_id}`,{
+    await axios.delete(`${baseURL}/directories/${dir_id}`,{
         data: {
             recursive: true
         }
     });
-    console.log("Garbage Button Clicked")
-    console.log(response)
     return
 }
 
-// export const deleteDirectory = async (dir_id) => {
-//     const response = await axios.delete(`${baseURL}/directories/${dir_id}`);
-//     console.log(response)
-//     return
-// }
-
-export const getFiles = async () => {
-    // const response = await axios.get(`${baseURL}/files/bec46267-cc3c-45bf-9bd2-52928c6f44ef`)
-    const response = await axios.get(`${baseURL}/files/66102b24-60ef-4a7c-bce1-1b2e6d071811`)
-    // const response = await axios.get(`${baseURL}/files/2165252f-7fbe-4299-afc3-d1dc35e5937a`)
-
-    
-    
-    return response.data
-}
 
 export const deleteFile = async (dir_id) => {
-    const response = await axios.delete(`${baseURL}/files/${dir_id}`);
-    // const response = await axios.delete(`${baseURL}/files/${dir_id}`,{
-    //     data: {
-    //         recursive: true
-    //     }
-    // });
-    console.log(response)
+    await axios.delete(`${baseURL}/files/${dir_id}`);
     return
 }
-
-// export const getDirectoriesWithParams = async () => {
-//     const response = await axios.get(baseURL)
-//     return response.data
-// }
